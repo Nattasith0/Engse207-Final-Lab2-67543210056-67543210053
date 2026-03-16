@@ -1,18 +1,25 @@
 const jwt = require('jsonwebtoken');
 
-const SECRET = process.env.JWT_SECRET || 'dev-shared-secret';
-
 function verifyToken(req, res, next) {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'No token provided' });
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.startsWith('Bearer ')
+    ? authHeader.slice(7)
+    : null;
+
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized' });
   }
-  const token = authHeader.split(' ')[1];
+
   try {
-    req.user = jwt.verify(token, SECRET);
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET || 'dev-shared-secret'
+    );
+
+    req.user = decoded;
     next();
-  } catch (err) {
-    return res.status(401).json({ error: 'Invalid or expired token' });
+  } catch (error) {
+    return res.status(401).json({ error: 'Invalid token' });
   }
 }
 

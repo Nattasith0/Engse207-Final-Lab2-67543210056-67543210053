@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    h1, h2 {
+      margin-top: 0;
+    }
+
+    input, textarea, button {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #475569;
+      margin: 6px 0;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    a {
+      color: #93c5fd;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    #saveMsg {
+      margin-top: 10px;
+      color: #fbbf24;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+
+    th, td {
+      border: 1px solid #475569;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background: #334155;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>My Profile</h1>
+      <p><a href="./index.html">← Back to Task Board</a></p>
+      <div id="profileInfo">Loading profile...</div>
+    </div>
+
+    <div class="card">
+      <h2>Edit Profile</h2>
+      <input id="displayName" placeholder="Display name" />
+      <textarea id="bio" placeholder="Bio"></textarea>
+      <input id="avatarUrl" placeholder="Avatar URL" />
+      <button onclick="saveProfile()">Save Profile</button>
+      <div id="saveMsg"></div>
+    </div>
+
+    <div id="adminCard" class="card" style="display:none;">
+      <h2>All Users (Admin only)</h2>
+      <button onclick="loadUsers()">Refresh User List</button>
+      <div id="userList"></div>
+    </div>
+  </div>
+
+  <script src="./config.js"></script>
+  <script>
+    const USER_URL = window.APP_CONFIG.USER_URL;
+    const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
+    const token = localStorage.getItem('token');
+
+    if (!token || !currentUser) {
+      window.location.href = './index.html';
+    }
+
+    async function loadProfile() {
+      try {
+        const res = await fetch(`${USER_URL}/api/users/me`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          document.getElementById('profileInfo').textContent = data.error || 'Failed to load profile';
+          return;
+        }
+
+        const profile = data.profile;
+
+        document.getElementById('profileInfo').innerHTML = `
+          <strong>${profile.display_name || profile.username}</strong><br>
+          Username: ${profile.username}<br>
+          Email: ${profile.email}<br>
+          Role: ${profile.role}<br>
+          Bio: ${profile.bio || '-'}<br>
+          Avatar URL: ${profile.avatar_url || '-'}
+        `;
+
+        document.getElementById('displayName').value = profile.display_name || '';
+        document.getElementById('bio').value = profile.bio || '';
+        document.getElementById('avatarUrl').value = profile.avatar_url || '';
+      } catch (error) {
+        document.getElementById('profileInfo').textContent = 'Failed to connect to user service';
+      }
+    }
+
+    async function saveProfile() {
+      const saveMsg = document.getElementById('saveMsg');
+      saveMsg.textContent = 'Saving...';
+
+      try {
+        const res = await fetch(`${USER_URL}/api/users/me`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            display_name: document.getElementById('displayName').value,
+            bio: document.getElementById('bio').value,
+            avatar_url: document.getElementById('avatarUrl').value
+          })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          saveMsg.textContent = data.error || 'Failed to save profile';
+          return;
+        }
+
+        saveMsg.textContent = 'Profile saved successfully';
+        loadProfile();
+      } catch (error) {
+        saveMsg.textContent = 'Failed to connect to user service';
+      }
+    }
+
+    async function loadUsers() {
+      const box = document.getElementById('userList');
+      box.innerHTML = 'Loading users...';
+
+      try {
+        const res = await fetch(`${USER_URL}/api/users`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          box.textContent = data.error || 'Failed to load users';
+          return;
+        }
+
+        let html = `
+          <table>
+            <tr>
+              <th>User ID</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Display Name</th>
+            </tr>
+        `;
+
+        data.users.forEach((user) => {
+          html += `
+            <tr>
+              <td>${user.user_id}</td>
+              <td>${user.username}</td>
+              <td>${user.email}</td>
+              <td>${user.role}</td>
+              <td>${user.display_name || ''}</td>
+            </tr>
+          `;
+        });
+
+        html += `</table>`;
+        box.innerHTML = html;
+      } catch (error) {
+        box.textContent = 'Failed to connect to user service';
+      }
+    }
+
+    loadProfile();
+
+    if (currentUser.role === 'admin') {
+      document.getElementById('adminCard').style.display = 'block';
+      loadUsers();
+    }
+  </script>
+</body>
+</html>
