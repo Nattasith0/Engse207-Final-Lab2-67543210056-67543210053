@@ -1,48 +1,53 @@
 # TEAM_SPLIT.md
 
 ## ข้อมูลกลุ่ม
-- กลุ่มที่: 1
 - รายวิชา: ENGSE207 Software Architecture
+- งาน: Final Lab Set 2 — Microservices Scale-Up + Cloud Deployment (Railway)
 
 ## รายชื่อสมาชิก
-- 67543210056-7 นายณัฐสิทธิ์ มะโนชัย
-- 67543210053-4 นายฐิติภัทร์  ชุ่มมา
+| รหัสนักศึกษา | ชื่อ-นามสกุล |
+|---|---|
+| 67543210056-7 | นายณัฐสิทธิ์ มะโนชัย |
+| 67543210053-4 | นายฐิติภัทร์ ชุ่มมา |
+
+---
 
 ## การแบ่งงานหลัก
 
-### สมาชิกคนที่ 1: นายณัฐสิทธิ์ มะโนชัย
+### สมาชิกคนที่ 1: นายณัฐสิทธิ์ มะโนชัย (67543210056-7)
 รับผิดชอบงานหลักดังต่อไปนี้
-- Auth Service — Login route, JWT sign/verify, bcrypt password check
-- Nginx — HTTPS config, self-signed certificate, rate limiting, reverse proxy
-- Database — ออกแบบ schema (users, tasks, logs) และ seed users
-- Docker Compose — ตั้งค่า services, networks, healthcheck, environment variables
+- **Auth Service** — เพิ่ม `POST /api/auth/register` สำหรับสมัครสมาชิกใหม่
+- แยก `auth-db` ออกเป็น database เฉพาะ (Database-per-Service Pattern)
+- เขียน `auth-service/init.sql` พร้อม seed admin user
+- ปรับ `auth-service/src/db/db.js` ให้ใช้ `DATABASE_URL`
+- ปรับ `auth-service/src/middleware/jwtUtils.js` ให้ใช้ `JWT_SECRET` ร่วมกัน
+- Deploy `auth-service` + `auth-db` บน Railway
+- Branch: `feature/auth-register`
 
-### สมาชิกคนที่ 2: นายฐิติภัทร์  ชุ่มมา
+### สมาชิกคนที่ 2: นายฐิติภัทร์ ชุ่มมา (67543210053-4)
 รับผิดชอบงานหลักดังต่อไปนี้
-- Task Service — CRUD tasks, JWT middleware, role-based access (admin/member)
-- Log Service — รับ log จาก services, บันทึกลง DB, GET /api/logs/ พร้อม admin guard
-- Frontend — index.html (Task Board UI), logs.html (Log Dashboard)
-- ทดสอบระบบ end-to-end และจัดทำ screenshots ทั้ง 12 รูป
+- **User Service** — สร้างใหม่ทั้งหมด ประกอบด้วย `GET /api/users/me`, `PUT /api/users/me`, `GET /api/users` (admin only)
+- **Task Service** — ปรับให้ใช้ `task-db` แยก และแก้ไข db.js ให้ใช้ `DATABASE_URL`
+- เขียน `user-service/init.sql` สำหรับตาราง `user_profiles`
+- แก้ไข `task-service/src/routes/tasks.js` ให้รองรับ Database-per-Service
+- Deploy `user-service` + `user-db` และ `task-service` + `task-db` บน Railway
+- ตั้งค่า Gateway Strategy สำหรับ Cloud
+- Branch: `feature/user-service`
+
+---
 
 ## งานที่ดำเนินการร่วมกัน
-- ออกแบบ architecture diagram และ flow ของระบบร่วมกัน
-- ทดสอบระบบ end-to-end ร่วมกันผ่าน Postman
-- จัดทำ README.md และเอกสารประกอบการส่งงาน
-- แก้ปัญหา npm ci ที่เกิดจากไม่มี package-lock.json ร่วมกัน
+- อัปเดต `docker-compose.yml` ให้รองรับ 3 services + 3 databases พร้อม healthcheck
+- เพิ่ม `frontend/` พร้อมหน้า Register, Login, Profile และ Log Dashboard
+- ทดสอบระบบแบบ end-to-end ด้วย Postman และ Browser
+- จัดทำ Screenshots ครบ 12 ภาพ
+- จัดทำ Architecture Diagram สำหรับ README
+- Debug ปัญหา JWT_SECRET และ Database connection ร่วมกัน
+
+---
 
 ## เหตุผลในการแบ่งงาน
-
-การแบ่งหน้าที่พิจารณาตามขอบเขตของแต่ละ service เพื่อให้การพัฒนาระบบเป็นไปอย่างชัดเจน
-สมาชิกคนที่ 1 ดูแลส่วนของ **security layer** ได้แก่ Auth Service, การตั้งค่า Nginx และการใช้งาน HTTPS ซึ่งเป็นโครงสร้างพื้นฐานสำคัญที่บริการอื่น ๆ ต้องใช้ร่วมกัน
-
-ส่วนสมาชิกคนที่ 2 รับผิดชอบ **business logic layer** ประกอบด้วย Task Service, Log Service และ Frontend ซึ่งเป็นส่วนการทำงานหลักของระบบ และต้องเชื่อมต่อการทำงานต่อจากกระบวนการ authentication ที่ได้ตั้งค่าไว้แล้ว
-
+แบ่งตาม **Service Boundary** ของระบบ โดยคนที่ 1 รับผิดชอบ Auth ซึ่งเป็นหัวใจของระบบ Authentication และ JWT ส่วนคนที่ 2 รับผิดชอบ User และ Task ซึ่งเป็น Business Logic หลักของระบบ การแบ่งแบบนี้สอดคล้องกับ Microservices Pattern ที่แต่ละคนเป็นเจ้าของ service ของตนเองอย่างชัดเจน
 
 ## สรุปการเชื่อมโยงงานของสมาชิก
-- Auth Service (คนที่ 1) ออก JWT → Task Service และ Log Service (คนที่ 2) ใช้ JWT
-  ตรวจสอบสิทธิ์ก่อนให้เข้าถึง resource
-- Nginx (คนที่ 1) เป็น entry point รับ request จาก browser แล้ว route ไปยัง
-  services ของทั้งสองคน
-- Log Service (คนที่ 2) รับ log event จาก Auth Service และ Task Service ผ่าน
-  POST /api/logs/internal ภายใน Docker network
-- Frontend (คนที่ 2) เรียก API ทุกตัวผ่าน HTTPS ที่ Nginx (คนที่ 1) ตั้งค่าไว้
+งานของสมาชิกทั้งสองเชื่อมต่อกันผ่าน **JWT Token** โดย Auth Service ของคนที่ 1 ออก token ให้ และ Task/User Service ของคนที่ 2 ต้อง verify token ด้วย `JWT_SECRET` ค่าเดียวกัน นอกจากนี้ยังเชื่อมโยงผ่าน `user_id` ที่เป็น logical reference ระหว่าง 3 databases

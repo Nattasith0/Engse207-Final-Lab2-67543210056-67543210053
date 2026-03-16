@@ -1,52 +1,58 @@
-# INDIVIDUAL_REPORT_67543210056.md
+# INDIVIDUAL_REPORT_67543210056-7.md
 
 ## ข้อมูลผู้จัดทำ
 - ชื่อ-นามสกุล: นายณัฐสิทธิ์ มะโนชัย
 - รหัสนักศึกษา: 67543210056-7
-- กลุ่ม: 11
+- รายวิชา: ENGSE207 Software Architecture
+- งาน: Final Lab Set 2 — Microservices Scale-Up + Cloud Deployment (Railway)
+
+---
 
 ## ขอบเขตงานที่รับผิดชอบ
-- Auth Service — Login route, JWT sign/verify, bcrypt password check, logEvent helper
-- Nginx — HTTPS config, self-signed certificate, rate limiting, reverse proxy routing
-- Database — ออกแบบ schema ตาราง users, tasks, logs และ seed users ทั้ง 3 บัญชี
-- Docker Compose — ตั้งค่า services, networks, healthcheck, environment variables
+
+รับผิดชอบ **Auth Service** ทั้งหมด ประกอบด้วย
+
+- เพิ่ม `POST /api/auth/register` สำหรับสมัครสมาชิกใหม่
+- ปรับ `auth-service/src/db/db.js` ให้ใช้ `DATABASE_URL` แทนการตั้งค่าแบบ host/port แยก
+- ปรับ `auth-service/src/middleware/jwtUtils.js` ให้ใช้ `JWT_SECRET` ร่วมกันทุก service
+- เขียน `auth-service/init.sql` สำหรับ auth-db โดยเฉพาะ พร้อม seed admin user
+- Deploy `auth-service` + `auth-db` บน Railway
+
+---
 
 ## สิ่งที่ได้ดำเนินการด้วยตนเอง
-- เขียน POST /api/auth/login ให้ตรวจสอบ bcrypt hash และออก JWT token
-- เขียน GET /api/auth/verify และ /api/auth/me สำหรับตรวจสอบ token
-- เพิ่ม logEvent() helper ใน auth-service เพื่อส่ง LOGIN_SUCCESS และ LOGIN_FAILED
-  ไปยัง log-service ผ่าน POST /api/logs/internal
-- ตั้งค่า nginx.conf ให้ redirect HTTP → HTTPS และกำหนด rate limit
-  login endpoint ที่ 5 req/นาที
-- สร้าง self-signed certificate ด้วย openssl สำหรับ development
-- เขียน db/init.sql สร้างตาราง users, tasks, logs พร้อม index และ seed users
-- Generate bcrypt hash จริงสำหรับ alice123, bob456, adminpass ด้วย bcryptjs
+
+- เขียน Register endpoint ใน `auth-service/src/routes/auth.js` ครบ ทั้งการตรวจสอบ input, เช็ค duplicate user, hash password ด้วย bcryptjs และ return response ที่เหมาะสม
+- แก้ไข `db.js` จากการใช้ `host/port/database` แยกกันมาเป็น `connectionString` เพื่อให้รองรับ Railway DATABASE_URL
+- แก้ไข `jwtUtils.js` ให้ default secret เป็น `dev-shared-secret` ตรงกับทุก service
+- แก้ไข `index.js` ให้ใช้ `db.query()` แทน `pool.query()` เพื่อให้สอดคล้องกับ db.js ที่แก้ใหม่
+- ทดสอบ Register และ Login flow ด้วย Postman จนผ่านครบ
+
+---
 
 ## ปัญหาที่พบและวิธีการแก้ไข
-**ปัญหา 1: npm ci ล้มเหลวตอน docker compose up --build**
-เกิดจากไม่มีไฟล์ package-lock.json ใน auth-service
-แก้โดยรัน npm install ใน auth-service ก่อน build เพื่อสร้าง package-lock.json
-จากนั้น docker compose up --build ผ่านทันที
 
-**ปัญหา 2: Browser แจ้งเตือน Your connection is not private**
-เกิดจากใช้ self-signed certificate ซึ่ง browser ไม่ไว้วางใจ
-แก้โดยกด Advanced → Proceed to localhost (unsafe)
-เพราะในงานนี้เป็น development environment ไม่ใช่ production
+| ปัญหา | วิธีแก้ |
+|---|---|
+| `bcrypt` บน Windows ไม่ทำงานใน Docker (Exec format error) | เปลี่ยนจาก `bcrypt` เป็น `bcryptjs` ซึ่งเป็น pure JavaScript ไม่ต้องคอมไพล์ |
+| `db is not defined` ใน register route | เพราะ `db.js` export `{ pool }` แต่ route ใช้ `db.query()` แก้โดยเปลี่ยน export เป็น `module.exports = { query }` |
+| JWT_SECRET ไม่ตรงกัน ทำให้ task-service verify token ไม่ผ่าน | แก้ค่า default ใน `jwtUtils.js` ของทุก service ให้เหมือนกัน และตั้งค่าใน `docker-compose.yml` ให้ครบ |
+| `const router` ประกาศ 2 ครั้งใน auth.js | ลบบรรทัดที่ซ้ำออก และจัดโครงสร้างไฟล์ใหม่ให้สะอาด |
+
+---
 
 ## สิ่งที่ได้เรียนรู้จากงานนี้
-- เข้าใจ TLS termination ที่ Nginx หมายความว่า request จาก browser
-  เข้ามาเป็น HTTPS แต่ภายใน Docker network ส่งต่อเป็น HTTP ธรรมดา
-- เข้าใจว่า JWT ประกอบด้วย Header, Payload, Signature โดย Payload
-  อ่านได้โดยไม่ต้องมี secret แต่แก้ไขไม่ได้เพราะ Signature จะผิด
-- เข้าใจ bcrypt hash ว่าแต่ละครั้งที่ hash จะได้ค่าต่างกัน แต่ compare ผ่านได้
-  เพราะ salt ถูกเก็บรวมอยู่ใน hash แล้ว
-- เข้าใจ trade-off ของ shared database ว่าสะดวกในการพัฒนา
-  แต่ไม่ scale ได้ดีเมื่อต้องการแยก service อย่างสมบูรณ์
 
-## แนวทางการพัฒนาต่อไปใน Set 2
-- แยก database ออกเป็น database-per-service เพื่อให้แต่ละ service
-  เป็นอิสระจากกันอย่างแท้จริง
-- เพิ่ม Register endpoint ใน auth-service สำหรับสร้าง user ใหม่
-- เปลี่ยน self-signed certificate เป็น Let's Encrypt หรือใช้ certificate
-  จาก cloud provider เมื่อ deploy บน Railway
-- เพิ่ม refresh token mechanism เพื่อยืดอายุการใช้งานโดยไม่ต้อง login ใหม่
+- **Database-per-Service Pattern** ทำให้แต่ละ service เป็นอิสระต่อกัน ไม่มี Foreign Key ข้าม database ต้องใช้ `user_id` เป็น logical reference แทน
+- **JWT เป็น Stateless** ทำให้ Task Service และ User Service ไม่ต้อง query auth-db เลย แค่ verify token ด้วย `JWT_SECRET` เดียวกันก็รู้ว่าใครคือใคร
+- **bcryptjs vs bcrypt** — `bcrypt` ต้องคอมไพล์ native code ทำให้มีปัญหาข้าม platform แต่ `bcryptjs` เป็น pure JavaScript ใช้ได้ทุก environment
+- **Docker healthcheck** สำคัญมากสำหรับการรอให้ DB พร้อมก่อน service start โดยใช้ `condition: service_healthy`
+
+---
+
+## แนวทางการพัฒนาต่อไป
+
+- เพิ่ม rate limiting สำหรับ register endpoint เพื่อป้องกัน spam
+- เพิ่ม email verification หลังสมัครสมาชิก
+- เพิ่ม refresh token mechanism เพื่อความปลอดภัย
+- ทำ cascade delete เมื่อลบ user เพื่อจัดการ orphan records ใน task-db และ user-db
