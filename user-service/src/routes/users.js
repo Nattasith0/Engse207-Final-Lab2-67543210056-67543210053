@@ -49,28 +49,16 @@ router.put('/me', verifyToken, async (req, res) => {
         const userId = req.user.sub;
         const { display_name, bio, avatar_url } = req.body;
 
-        const existing = await db.query(
-            'SELECT * FROM user_profiles WHERE user_id = $1',
-            [userId]
-        );
-
-        if (existing.rows.length === 0) {
-            await db.query(
-                `INSERT INTO user_profiles (user_id, username, email, role)
-         VALUES ($1, $2, $3, $4)`,
-                [userId, req.user.username, req.user.email, req.user.role]
-            );
-        }
-
         const result = await db.query(
-            `UPDATE user_profiles
-       SET display_name = COALESCE($1, display_name),
-           bio          = COALESCE($2, bio),
-           avatar_url   = COALESCE($3, avatar_url),
-           updated_at   = NOW()
-       WHERE user_id = $4
-       RETURNING *`,
-            [display_name, bio, avatar_url, userId]
+            `INSERT INTO user_profiles (user_id, username, email, role, display_name, bio, avatar_url)
+             VALUES ($1, $2, $3, $4, $5, $6, $7)
+             ON CONFLICT (user_id) DO UPDATE SET
+               display_name = COALESCE(EXCLUDED.display_name, user_profiles.display_name),
+               bio          = COALESCE(EXCLUDED.bio, user_profiles.bio),
+               avatar_url   = COALESCE(EXCLUDED.avatar_url, user_profiles.avatar_url),
+               updated_at   = NOW()
+             RETURNING *`,
+            [userId, req.user.username, req.user.email, req.user.role, display_name, bio, avatar_url]
         );
 
         res.json({ profile: result.rows[0] });

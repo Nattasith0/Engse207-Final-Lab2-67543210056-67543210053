@@ -7,6 +7,18 @@ router.get('/health', (_, res) => res.json({ status: 'ok', service: 'task-servic
 
 router.use(requireAuth);
 
+// GET /api/tasks/logs (admin only)
+router.get('/logs', async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Forbidden: Admin only' });
+    const result = await db.query('SELECT * FROM logs ORDER BY created_at DESC LIMIT 200');
+    res.json({ logs: result.rows, count: result.rowCount, service: 'task-service' });
+  } catch (err) {
+    console.error('GET /tasks/logs error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // GET /api/tasks/
 router.get('/', async (req, res) => {
   try {
@@ -86,16 +98,6 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// GET /api/tasks/logs (admin only)
-router.get('/logs', async (req, res) => {
-  try {
-    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Forbidden: Admin only' });
-    const result = await db.query('SELECT * FROM logs ORDER BY created_at DESC LIMIT 200');
-    res.json({ logs: result.rows, count: result.rowCount, service: 'task-service' });
-  } catch (err) {
-    console.error('GET /tasks/logs error:', err);
-    res.status(500).json({ error: 'Server error' });
-  }
-});
+
 
 module.exports = router;

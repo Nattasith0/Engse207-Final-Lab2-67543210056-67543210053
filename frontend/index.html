@@ -2194,9 +2194,10 @@
                         const isExp = msLeft < 0;
 
                         document.getElementById('jwt-decoded').innerHTML = `
-      <p style="font-size:.78rem;color:var(--muted);margin-bottom:.4rem">🟣 Payload (decoded — ใครก็อ่านได้!):</p>
-      <pre>${JSON.stringify(payload, null, 2)}</pre>
+      <p style="font-size:.78rem;color:var(--text);margin-bottom:.5rem;font-weight:600;">🟣 Payload (decoded — ใครก็อ่านได้!):</p>
+      <pre id="jwt-payload-text"></pre>
     `;
+                        document.getElementById('jwt-payload-text').textContent = JSON.stringify(payload, null, 2);
                         document.getElementById('token-exp').innerHTML = isExp
                             ? `<span class="exp-bad">⚠️ Token หมดอายุแล้ว!</span>`
                             : `<span class="exp-ok">✅ Token ยังใช้ได้ — หมดอายุใน ${minLeft} นาที (${expDate.toLocaleTimeString('th-TH')})</span>`;
