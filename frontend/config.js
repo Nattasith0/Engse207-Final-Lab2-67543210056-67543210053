@@ -1,0 +1,5 @@
+window.APP_CONFIG = {
+  AUTH_URL: 'https://YOUR-AUTH-DOMAIN',
+  TASK_URL: 'https://YOUR-TASK-DOMAIN',
+  USER_URL: 'https://YOUR-USER-DOMAIN'
+};
