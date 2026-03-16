@@ -1,5 +1,5 @@
-const express  = require('express');
-const bcrypt   = require('bcryptjs');
+const express = require('express');
+const bcrypt = require('bcryptjs');
 const { pool } = require('../db/db');
 const { generateToken, verifyToken } = require('../middleware/jwtUtils');
 
@@ -16,7 +16,7 @@ async function logEvent({ level, event, userId, ip, method, path, statusCode, me
         method, path, status_code: statusCode, message, meta
       })
     });
-  } catch (_) {}
+  } catch (_) { }
 }
 
 // POST /api/auth/login
@@ -70,6 +70,21 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// POST /api/auth/register
+router.post('/register', async (req, res) => {
+  const { username, email, password } = req.body;
+  if (!username || !email || !password)
+    return res.status(400).json({ error: 'Missing fields' });
+
+  const hash = await bcrypt.hash(password, 10);
+  const result = await db.query(
+    `INSERT INTO users (username, email, password_hash, role)
+     VALUES ($1, $2, $3, 'member') RETURNING id, username, email, role`,
+    [username, email, hash]
+  );
+  res.status(201).json({ message: 'Registered', user: result.rows[0] });
+});
+
 // GET /api/auth/verify
 router.get('/verify', (req, res) => {
   const token = (req.headers['authorization'] || '').split(' ')[1];
@@ -88,7 +103,7 @@ router.get('/me', async (req, res) => {
   if (!token) return res.status(401).json({ error: 'Unauthorized' });
   try {
     const decoded = verifyToken(token);
-    const result  = await pool.query(
+    const result = await pool.query(
       'SELECT id, username, email, role, created_at, last_login FROM users WHERE id = $1',
       [decoded.sub]
     );
