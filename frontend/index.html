@@ -72,15 +72,19 @@
                 transform: translateX(0) rotate(0deg);
                 opacity: 1;
             }
+
             25% {
                 transform: translateX(15px) rotate(90deg);
             }
+
             50% {
                 transform: translateX(-10px) rotate(180deg);
             }
+
             75% {
                 transform: translateX(20px) rotate(270deg);
             }
+
             100% {
                 transform: translateX(-5px) rotate(360deg);
                 top: 100vh;
@@ -1271,6 +1275,7 @@
             cursor: default;
         }
     </style>
+    <script src="config.js"></script>
 </head>
 
 <body>
@@ -1554,8 +1559,10 @@
                         <div class="log-pagination">
                             <span id="log-page-info">—</span>
                             <div class="log-page-btns">
-                                <button class="log-page-btn" id="log-btn-prev" onclick="logPrevPage()" disabled>◀ ก่อนหน้า</button>
-                                <button class="log-page-btn" id="log-btn-next" onclick="logNextPage()" disabled>ถัดไป ▶</button>
+                                <button class="log-page-btn" id="log-btn-prev" onclick="logPrevPage()" disabled>◀
+                                    ก่อนหน้า</button>
+                                <button class="log-page-btn" id="log-btn-next" onclick="logNextPage()" disabled>ถัดไป
+                                    ▶</button>
                             </div>
                         </div>
                     </div>
@@ -1629,9 +1636,9 @@
             <div class="toast-container" id="toast-container"></div>
 
             <script>
-                const AUTH_API = 'http://localhost:3001';
-                const TASK_API = 'http://localhost:3002';
-                const USER_API = 'http://localhost:3003';
+                const AUTH_API = (window.APP_CONFIG && window.APP_CONFIG.AUTH_URL) || 'http://localhost:3001';
+                const TASK_API = (window.APP_CONFIG && window.APP_CONFIG.TASK_URL) || 'http://localhost:3002';
+                const USER_API = (window.APP_CONFIG && window.APP_CONFIG.USER_URL) || 'http://localhost:3003';
                 const API = AUTH_API;
                 let currentUser = null;
                 let token = localStorage.getItem('jwt_token');
@@ -2232,25 +2239,25 @@
                 }
             </script>
 
-    <!-- Snow Generator -->
-    <script>
-        (function createSnow() {
-            const container = document.getElementById('snowflakes');
-            const snowChars = ['❄', '❅', '❆', '✻', '✼', '❉', '•'];
-            const count = 40;
-            for (let i = 0; i < count; i++) {
-                const flake = document.createElement('div');
-                flake.classList.add('snowflake');
-                flake.textContent = snowChars[Math.floor(Math.random() * snowChars.length)];
-                flake.style.left = Math.random() * 100 + '%';
-                flake.style.fontSize = (Math.random() * 1.2 + 0.5) + 'rem';
-                flake.style.opacity = Math.random() * 0.7 + 0.3;
-                flake.style.animationDuration = (Math.random() * 8 + 5) + 's';
-                flake.style.animationDelay = (Math.random() * 10) + 's';
-                container.appendChild(flake);
-            }
-        })();
-    </script>
+            <!-- Snow Generator -->
+            <script>
+                (function createSnow() {
+                    const container = document.getElementById('snowflakes');
+                    const snowChars = ['❄', '❅', '❆', '✻', '✼', '❉', '•'];
+                    const count = 40;
+                    for (let i = 0; i < count; i++) {
+                        const flake = document.createElement('div');
+                        flake.classList.add('snowflake');
+                        flake.textContent = snowChars[Math.floor(Math.random() * snowChars.length)];
+                        flake.style.left = Math.random() * 100 + '%';
+                        flake.style.fontSize = (Math.random() * 1.2 + 0.5) + 'rem';
+                        flake.style.opacity = Math.random() * 0.7 + 0.3;
+                        flake.style.animationDuration = (Math.random() * 8 + 5) + 's';
+                        flake.style.animationDelay = (Math.random() * 10) + 's';
+                        container.appendChild(flake);
+                    }
+                })();
+            </script>
 </body>
 
 </html>
