@@ -1,22 +1,7 @@
-const express     = require('express');
-const { pool }    = require('../db/db');
-const requireAuth = require('../middleware/authMiddleware');
-
+const express = require('express');
 const router = express.Router();
-
-async function logEvent({ level, event, userId, ip, method, path, statusCode, message, meta }) {
-  try {
-    await fetch('http://log-service:3003/api/logs/internal', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        service: 'task-service', level, event,
-        user_id: userId, ip_address: ip,
-        method, path, status_code: statusCode, message, meta
-      })
-    });
-  } catch (_) {}
-}
+const db = require('../db/db');
+const requireAuth = require('../middleware/authMiddleware');
 
 router.get('/health', (_, res) => res.json({ status: 'ok', service: 'task-service' }));
 
@@ -27,17 +12,18 @@ router.get('/', async (req, res) => {
   try {
     let result;
     if (req.user.role === 'admin') {
-      result = await pool.query(
-        'SELECT t.*, u.username FROM tasks t JOIN users u ON t.user_id = u.id ORDER BY t.created_at DESC'
+      result = await db.query(
+        'SELECT * FROM tasks ORDER BY created_at DESC'
       );
     } else {
-      result = await pool.query(
-        'SELECT t.*, u.username FROM tasks t JOIN users u ON t.user_id = u.id WHERE t.user_id = $1 ORDER BY t.created_at DESC',
+      result = await db.query(
+        'SELECT * FROM tasks WHERE user_id = $1 ORDER BY created_at DESC',
         [req.user.sub]
       );
     }
     res.json({ tasks: result.rows, count: result.rowCount });
   } catch (err) {
+    console.error('GET /tasks error:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -47,18 +33,14 @@ router.post('/', async (req, res) => {
   const { title, description, status = 'TODO', priority = 'medium' } = req.body;
   if (!title) return res.status(400).json({ error: 'title is required' });
   try {
-    const result = await pool.query(
-      'INSERT INTO tasks (user_id, title, description, status, priority) VALUES ($1,$2,$3,$4,$5) RETURNING *',
+    const result = await db.query(
+      `INSERT INTO tasks (user_id, title, description, status, priority)
+       VALUES ($1,$2,$3,$4,$5) RETURNING *`,
       [req.user.sub, title, description, status, priority]
     );
-    const task = result.rows[0];
-    await logEvent({
-      level: 'INFO', event: 'TASK_CREATED', userId: req.user.sub,
-      method: 'POST', path: '/api/tasks', statusCode: 201,
-      message: `Task created: "${title}"`, meta: { task_id: task.id, title }
-    });
-    res.status(201).json({ task });
+    res.status(201).json({ task: result.rows[0] });
   } catch (err) {
+    console.error('POST /tasks error:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -67,13 +49,13 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const check = await pool.query('SELECT * FROM tasks WHERE id = $1', [id]);
+    const check = await db.query('SELECT * FROM tasks WHERE id = $1', [id]);
     if (!check.rows[0]) return res.status(404).json({ error: 'Task not found' });
     if (check.rows[0].user_id !== req.user.sub && req.user.role !== 'admin')
       return res.status(403).json({ error: 'Forbidden' });
 
     const { title, description, status, priority } = req.body;
-    const result = await pool.query(
+    const result = await db.query(
       `UPDATE tasks SET
         title=COALESCE($1,title), description=COALESCE($2,description),
         status=COALESCE($3,status), priority=COALESCE($4,priority), updated_at=NOW()
@@ -82,6 +64,7 @@ router.put('/:id', async (req, res) => {
     );
     res.json({ task: result.rows[0] });
   } catch (err) {
+    console.error('PUT /tasks error:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -90,19 +73,27 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const check = await pool.query('SELECT * FROM tasks WHERE id = $1', [id]);
+    const check = await db.query('SELECT * FROM tasks WHERE id = $1', [id]);
     if (!check.rows[0]) return res.status(404).json({ error: 'Task not found' });
     if (check.rows[0].user_id !== req.user.sub && req.user.role !== 'admin')
       return res.status(403).json({ error: 'Forbidden' });
 
-    await pool.query('DELETE FROM tasks WHERE id = $1', [id]);
-    await logEvent({
-      level: 'INFO', event: 'TASK_DELETED', userId: req.user.sub,
-      method: 'DELETE', path: `/api/tasks/${id}`, statusCode: 200,
-      message: `Task ${id} deleted`
-    });
+    await db.query('DELETE FROM tasks WHERE id = $1', [id]);
     res.json({ message: 'Task deleted' });
   } catch (err) {
+    console.error('DELETE /tasks error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// GET /api/tasks/logs (admin only)
+router.get('/logs', async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Forbidden: Admin only' });
+    const result = await db.query('SELECT * FROM logs ORDER BY created_at DESC LIMIT 200');
+    res.json({ logs: result.rows, count: result.rowCount, service: 'task-service' });
+  } catch (err) {
+    console.error('GET /tasks/logs error:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });

@@ -1,4 +1,5 @@
 services:
+
   auth-db:
     image: postgres:15
     environment:
@@ -9,6 +10,12 @@ services:
       - "5433:5432"
     volumes:
       - ./auth-service/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - auth-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d authdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   task-db:
     image: postgres:15
@@ -20,6 +27,12 @@ services:
       - "5434:5432"
     volumes:
       - ./task-service/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - task-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d taskdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   user-db:
     image: postgres:15
@@ -31,6 +44,12 @@ services:
       - "5435:5432"
     volumes:
       - ./user-service/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - user-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d userdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   auth-service:
     build: ./auth-service
@@ -41,7 +60,8 @@ services:
     ports:
       - "3001:3001"
     depends_on:
-      - auth-db
+      auth-db:
+        condition: service_healthy
 
   task-service:
     build: ./task-service
@@ -52,7 +72,8 @@ services:
     ports:
       - "3002:3002"
     depends_on:
-      - task-db
+      task-db:
+        condition: service_healthy
 
   user-service:
     build: ./user-service
@@ -63,4 +84,19 @@ services:
     ports:
       - "3003:3003"
     depends_on:
-      - user-db
+      user-db:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - auth-service
+      - task-service
+      - user-service
+
+volumes:
+  auth-db-data:
+  task-db-data:
+  user-db-data:

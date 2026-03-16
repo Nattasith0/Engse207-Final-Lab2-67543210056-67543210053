@@ -1027,6 +1027,202 @@
             font-size: .9rem;
             margin-top: .4rem;
         }
+
+        /* ═══════════════════════════════════════════════════════
+       LOG DASHBOARD (Admin)
+    ═══════════════════════════════════════════════════════ */
+        .log-stats-strip {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: .75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .log-stats-strip .stat-card .stat-value {
+            font-size: 1.4rem;
+        }
+
+        .log-filter-row {
+            display: flex;
+            gap: .5rem;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .log-filter-row select {
+            padding: .4rem .75rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--surface2);
+            color: var(--text);
+            font-size: .82rem;
+            font-family: inherit;
+        }
+
+        .log-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .log-section-header {
+            padding: .9rem 1.25rem;
+            background: var(--surface2);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .log-section-header h3 {
+            font-size: .95rem;
+            font-weight: 700;
+        }
+
+        .log-count-badge {
+            background: var(--blue);
+            color: white;
+            padding: 1px 8px;
+            border-radius: 999px;
+            font-size: .72rem;
+            font-weight: 700;
+        }
+
+        .log-table-hdr {
+            display: grid;
+            grid-template-columns: 140px 65px 90px 120px 1fr 80px;
+            padding: .45rem 1.25rem;
+            background: var(--surface2);
+            font-size: .7rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .log-scroll {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .log-row {
+            display: grid;
+            grid-template-columns: 140px 65px 90px 120px 1fr 80px;
+            padding: .55rem 1.25rem;
+            border-bottom: 1px solid rgba(255, 255, 255, .04);
+            font-size: .8rem;
+            align-items: center;
+            transition: background .1s;
+        }
+
+        .log-row:hover {
+            background: var(--surface2);
+        }
+
+        .log-chip {
+            display: inline-block;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-size: .72rem;
+            font-weight: 600;
+        }
+
+        .log-chip-INFO {
+            background: rgba(34, 197, 94, .15);
+            color: #4ade80;
+        }
+
+        .log-chip-WARN {
+            background: rgba(245, 158, 11, .15);
+            color: #fbbf24;
+        }
+
+        .log-chip-ERROR {
+            background: rgba(239, 68, 68, .15);
+            color: #fca5a5;
+        }
+
+        .log-chip-auth {
+            background: rgba(59, 130, 246, .15);
+            color: #93c5fd;
+        }
+
+        .log-chip-task {
+            background: rgba(168, 85, 247, .15);
+            color: #c4b5fd;
+        }
+
+        .log-chip-user {
+            background: rgba(34, 197, 94, .15);
+            color: #86efac;
+        }
+
+        .log-time-text {
+            font-family: monospace;
+            font-size: .72rem;
+            color: var(--muted);
+        }
+
+        .log-event-text {
+            font-family: monospace;
+            font-size: .75rem;
+        }
+
+        .log-msg-text {
+            color: var(--muted);
+            font-size: .78rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .log-empty-box {
+            padding: 3rem;
+            text-align: center;
+            color: var(--muted);
+        }
+
+        .log-empty-box .icon {
+            font-size: 2.5rem;
+            margin-bottom: .75rem;
+        }
+
+        .log-pagination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: .75rem 1.25rem;
+            border-top: 1px solid var(--border);
+            font-size: .82rem;
+            color: var(--muted);
+        }
+
+        .log-page-btns {
+            display: flex;
+            gap: .5rem;
+        }
+
+        .log-page-btn {
+            padding: .3rem .7rem;
+            border-radius: 5px;
+            border: 1px solid var(--border);
+            background: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: .78rem;
+        }
+
+        .log-page-btn:hover:not(:disabled) {
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+
+        .log-page-btn:disabled {
+            opacity: .4;
+            cursor: default;
+        }
     </style>
 </head>
 
@@ -1041,18 +1237,42 @@
             <div class="auth-title">Task Board</div>
             <div class="auth-subtitle">Final Lab — Security Architecture</div>
 
+            <!-- Tabs -->
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="switchTab('login')">เข้าสู่ระบบ</button>
+                <button class="auth-tab" onclick="switchTab('register')">สมัครสมาชิก</button>
+            </div>
 
+
+            <!-- Login Form -->
             <!-- Login Form -->
             <div id="login-form">
                 <div class="form-group">
                     <label>Email</label>
-                    <input id="login-email" type="email" value="alice@lab.local" placeholder="you@lab.local">
+                    <input id="login-email" type="email" placeholder="you@lab.local">
                 </div>
                 <div class="form-group">
                     <label>Password</label>
-                    <input id="login-password" type="password" value="alice123" placeholder="password">
+                    <input id="login-password" type="password" placeholder="password">
                 </div>
                 <button class="btn-primary" onclick="doLogin()">เข้าสู่ระบบ</button>
+            </div>
+
+            <!-- Register Form -->
+            <div id="register-form" class="hidden">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input id="reg-username" type="text" placeholder="เช่น testuser">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input id="reg-email" type="email" placeholder="you@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input id="reg-password" type="password" placeholder="รหัสผ่าน">
+                </div>
+                <button class="btn-primary" onclick="doRegister()">สมัครสมาชิก</button>
             </div>
 
             <div id="auth-msg"></div>
@@ -1079,12 +1299,12 @@
                     <span class="badge-count" id="task-count">0</span>
                 </button>
                 <button class="nav-item" data-page="profile" onclick="showPage('profile')">
-                    <span class="nav-icon">👤</span> Profile & JWT
+                    <span class="nav-icon">👤</span> Profile
                 </button>
-                <a href="logs.html" target="_blank" class="nav-item" style="text-decoration:none;">
-                    <span class="nav-icon">📊</span> Log Dashboard
-                    <span style="margin-left:auto;font-size:.7rem;color:var(--muted)">↗</span>
-                </a>
+                <!-- แสดงเฉพาะ admin -->
+                <button class="nav-item hidden" id="nav-logs" data-page="logs" onclick="showPage('logs')">
+                    <span class="nav-icon">📊</span> Logs
+                </button>
             </div>
             <div class="sidebar-footer">
                 <div class="user-chip">
@@ -1157,11 +1377,10 @@
                 </div>
             </div>
 
-            <!-- ── USERS PAGE ── -->
-            <!-- ── PROFILE PAGE ── -->
+            <!-- ── PROFILE PAGE (member) ── -->
             <div id="page-profile" class="hidden">
                 <div class="page-header">
-                    <div class="page-title">👤 Profile & JWT</div>
+                    <div class="page-title">👤 แก้ไขโปรไฟล์</div>
                 </div>
                 <div class="page-body">
                     <div class="profile-card">
@@ -1174,265 +1393,400 @@
                                     style="margin-top:4px;display:inline-block">—</span>
                             </div>
                         </div>
-                        <div class="info-grid">
-                            <div class="info-item"><label>User ID</label>
-                                <p id="prof-id">—</p>
+
+                        <!-- แก้ไขข้อมูล -->
+                        <div style="margin-top:1.5rem">
+                            <div class="form-group">
+                                <label
+                                    style="font-size:.8rem;color:var(--muted);display:block;margin-bottom:.4rem">Display
+                                    Name</label>
+                                <input id="edit-display-name" type="text" placeholder="ชื่อที่แสดง"
+                                    style="width:100%;padding:.7rem 1rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem">
                             </div>
-                            <div class="info-item"><label>Role</label>
-                                <p id="prof-role">—</p>
+                            <div class="form-group" style="margin-top:1rem">
+                                <label
+                                    style="font-size:.8rem;color:var(--muted);display:block;margin-bottom:.4rem">Bio</label>
+                                <textarea id="edit-bio" placeholder="แนะนำตัวสั้นๆ..."
+                                    style="width:100%;padding:.7rem 1rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem;min-height:80px;resize:vertical;font-family:inherit"></textarea>
                             </div>
-                            <div class="info-item"><label>สมัครเมื่อ</label>
-                                <p id="prof-created">—</p>
+                            <div class="form-group" style="margin-top:1rem">
+                                <label
+                                    style="font-size:.8rem;color:var(--muted);display:block;margin-bottom:.4rem">Avatar
+                                    URL</label>
+                                <input id="edit-avatar-url" type="text" placeholder="https://..."
+                                    style="width:100%;padding:.7rem 1rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem">
                             </div>
-                            <div class="info-item"><label>API Endpoint</label>
-                                <p style="font-size:.8rem;color:var(--muted)">GET /api/auth/me</p>
-                            </div>
+                            <button onclick="saveProfile()"
+                                style="margin-top:1rem;padding:.7rem 1.5rem;background:var(--blue);color:white;border:none;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer">
+                                💾 บันทึกโปรไฟล์
+                            </button>
                         </div>
 
                         <!-- JWT Inspector -->
-                        <div class="jwt-panel">
-                            <h3>🔍 JWT Token Inspector (เพื่อการเรียนรู้)</h3>
+                        <div class="jwt-panel" style="margin-top:1.5rem">
+                            <h3>🔍 JWT Token Inspector</h3>
                             <div class="jwt-parts" id="jwt-parts"></div>
                             <div class="jwt-decoded" id="jwt-decoded"></div>
                             <div class="token-exp" id="token-exp"></div>
                         </div>
-
-                        <a href="logs.html" target="_blank" class="logs-link">
-                            📊 ไปดู Log Dashboard →
-                        </a>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- ════════════════════════════════════
+            <!-- ── LOG PAGE (admin only) ── -->
+            <div id="page-logs" class="hidden">
+                <div class="page-header">
+                    <div class="page-title">📊 Log Dashboard</div>
+                    <button class="btn-add" onclick="loadAllLogs()">🔄 Refresh</button>
+                </div>
+                <div class="page-body">
+                    <!-- Stats -->
+                    <div class="log-stats-strip">
+                        <div class="stat-card">
+                            <div class="stat-icon">📋</div>
+                            <div>
+                                <div class="stat-value" id="log-st-total" style="color:var(--blue)">—</div>
+                                <div class="stat-label">Total Logs</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">✅</div>
+                            <div>
+                                <div class="stat-value" id="log-st-info" style="color:var(--green)">—</div>
+                                <div class="stat-label">INFO</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">⚠️</div>
+                            <div>
+                                <div class="stat-value" id="log-st-warn" style="color:var(--yellow)">—</div>
+                                <div class="stat-label">WARN</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">❌</div>
+                            <div>
+                                <div class="stat-value" id="log-st-error" style="color:var(--red)">—</div>
+                                <div class="stat-label">ERROR</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Filters -->
+                    <div class="log-filter-row">
+                        <button class="filter-btn active" onclick="setLogFilter('ALL')">ทั้งหมด</button>
+                        <button class="filter-btn" onclick="setLogFilter('INFO')">INFO</button>
+                        <button class="filter-btn" onclick="setLogFilter('WARN')">WARN</button>
+                        <button class="filter-btn" onclick="setLogFilter('ERROR')">ERROR</button>
+                        <div class="spacer"></div>
+                        <label style="font-size:.82rem;color:var(--muted)">Service:</label>
+                        <select id="log-service-filter" onchange="setLogService(this.value)">
+                            <option value="ALL">ทั้งหมด</option>
+                            <option value="auth-service">🔑 auth-service</option>
+                            <option value="task-service">📋 task-service</option>
+                            <option value="user-service">👤 user-service</option>
+                        </select>
+                    </div>
+                    <!-- Log Table -->
+                    <div class="log-section">
+                        <div class="log-section-header">
+                            <h3>📋 Log Entries</h3>
+                            <span class="log-count-badge" id="log-badge-count">0</span>
+                        </div>
+                        <div class="log-table-hdr">
+                            <span>เวลา</span><span>Level</span><span>Service</span><span>Event</span><span>Message</span><span>User</span>
+                        </div>
+                        <div class="log-scroll" id="log-table-body">
+                            <div class="log-empty-box">
+                                <div class="icon">📭</div>
+                                <p>กำลังโหลด...</p>
+                            </div>
+                        </div>
+                        <div class="log-pagination">
+                            <span id="log-page-info">—</span>
+                            <div class="log-page-btns">
+                                <button class="log-page-btn" id="log-btn-prev" onclick="logPrevPage()" disabled>◀ ก่อนหน้า</button>
+                                <button class="log-page-btn" id="log-btn-next" onclick="logNextPage()" disabled>ถัดไป ▶</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ════════════════════════════════════
      MODALS
 ════════════════════════════════════ -->
-    <!-- Create/Edit Task Modal -->
-    <div id="task-modal" class="modal-overlay hidden">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 id="modal-title">สร้าง Task ใหม่</h3>
-                <button class="btn-close" onclick="closeModal()">✕</button>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" id="modal-task-id">
-                <div class="form-group">
-                    <label>ชื่อ Task *</label>
-                    <input id="modal-task-title" placeholder="เช่น: ออกแบบ UI หน้า Login">
-                </div>
-                <div class="form-group">
-                    <label>รายละเอียด</label>
-                    <textarea id="modal-task-desc" placeholder="อธิบายงานที่ต้องทำ..."></textarea>
-                </div>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
-                    <div class="form-group">
-                        <label>สถานะ</label>
-                        <select id="modal-task-status">
-                            <option value="TODO">⬜ TODO</option>
-                            <option value="IN_PROGRESS">🔄 In Progress</option>
-                            <option value="DONE">✅ Done</option>
-                        </select>
+            <!-- Create/Edit Task Modal -->
+            <div id="task-modal" class="modal-overlay hidden">
+                <div class="modal">
+                    <div class="modal-header">
+                        <h3 id="modal-title">สร้าง Task ใหม่</h3>
+                        <button class="btn-close" onclick="closeModal()">✕</button>
                     </div>
-                    <div class="form-group">
-                        <label>ความสำคัญ</label>
-                        <select id="modal-task-priority">
-                            <option value="low">🟢 Low</option>
-                            <option value="medium" selected>🟡 Medium</option>
-                            <option value="high">🔴 High</option>
-                        </select>
+                    <div class="modal-body">
+                        <input type="hidden" id="modal-task-id">
+                        <div class="form-group">
+                            <label>ชื่อ Task *</label>
+                            <input id="modal-task-title" placeholder="เช่น: ออกแบบ UI หน้า Login">
+                        </div>
+                        <div class="form-group">
+                            <label>รายละเอียด</label>
+                            <textarea id="modal-task-desc" placeholder="อธิบายงานที่ต้องทำ..."></textarea>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+                            <div class="form-group">
+                                <label>สถานะ</label>
+                                <select id="modal-task-status">
+                                    <option value="TODO">⬜ TODO</option>
+                                    <option value="IN_PROGRESS">🔄 In Progress</option>
+                                    <option value="DONE">✅ Done</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>ความสำคัญ</label>
+                                <select id="modal-task-priority">
+                                    <option value="low">🟢 Low</option>
+                                    <option value="medium" selected>🟡 Medium</option>
+                                    <option value="high">🔴 High</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-secondary" onclick="closeModal()">ยกเลิก</button>
+                        <button class="btn-submit" id="modal-submit-btn" onclick="submitTask()">💾 บันทึก</button>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeModal()">ยกเลิก</button>
-                <button class="btn-submit" id="modal-submit-btn" onclick="submitTask()">💾 บันทึก</button>
-            </div>
-        </div>
-    </div>
 
-    <!-- Confirm Delete Modal -->
-    <div id="confirm-modal" class="modal-overlay hidden">
-        <div class="modal" style="max-width:400px">
-            <div class="modal-body">
-                <div class="confirm-msg">
-                    <div class="warn-icon">🗑️</div>
-                    <p style="font-size:1rem;font-weight:700">ลบ Task นี้?</p>
-                    <p>ไม่สามารถกู้คืนได้หลังลบแล้ว</p>
+            <!-- Confirm Delete Modal -->
+            <div id="confirm-modal" class="modal-overlay hidden">
+                <div class="modal" style="max-width:400px">
+                    <div class="modal-body">
+                        <div class="confirm-msg">
+                            <div class="warn-icon">🗑️</div>
+                            <p style="font-size:1rem;font-weight:700">ลบ Task นี้?</p>
+                            <p>ไม่สามารถกู้คืนได้หลังลบแล้ว</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-secondary" onclick="closeConfirm()">ยกเลิก</button>
+                        <button class="btn-danger" id="confirm-delete-btn">🗑️ ลบเลย</button>
+                    </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeConfirm()">ยกเลิก</button>
-                <button class="btn-danger" id="confirm-delete-btn">🗑️ ลบเลย</button>
-            </div>
-        </div>
-    </div>
 
-    <!-- Toast Container -->
-    <div class="toast-container" id="toast-container"></div>
+            <!-- Toast Container -->
+            <div class="toast-container" id="toast-container"></div>
 
-    <script>
-        const API = 'https://localhost';
-        let currentUser = null;
-        let token = localStorage.getItem('jwt_token');
-        let allTasks = [];
-        let currentFilter = 'ALL';
-        
-
-        async function apiFetch(url, options = {}) {
-            return fetch(url, options);
-        }
-        throw err;
-            
-        
-
-        function authHeaders() {
-            return {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            };
-        }
-
-        function toast(msg, type = 'info', duration = 3000) {
-            const t = document.createElement('div');
-            t.className = `toast ${type}`;
-            t.textContent = msg;
-            document.getElementById('toast-container').prepend(t);
-            setTimeout(() => t.remove(), duration);
-        }
-
-        function showAuthMsg(msg, type) {
-            const el = document.getElementById('auth-msg');
-            el.className = `auth-msg ${type}`;
-            el.textContent = msg;
-        }
-
-        async function doLogin() {
-            const email = document.getElementById('login-email').value.trim();
-            const password = document.getElementById('login-password').value;
-            if (!email || !password) { showAuthMsg('กรุณากรอกข้อมูลให้ครบ', 'error'); return; }
-
-            const btn = document.querySelector('#login-form .btn-primary');
-            btn.innerHTML = '<span class="spinner"></span> กำลังเข้าสู่ระบบ...';
-            btn.disabled = true;
-
-            const res = await apiFetch(`${API}/api/auth/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
-            const data = await res.json();
-
-            btn.textContent = 'เข้าสู่ระบบ';
-            btn.disabled = false;
-
-            if (res.ok) {
-                token = data.token;
-                localStorage.setItem('jwt_token', token);
-                initApp(data.user);
-            } else {
-                showAuthMsg('❌ ' + (data.error || 'Login ล้มเหลว'), 'error');
-            }
-        }
-
-        function doLogout() {
-            localStorage.removeItem('jwt_token');
-            token = null; currentUser = null; allTasks = [];
-            document.getElementById('app-page').classList.add('hidden');
-            document.getElementById('auth-page').classList.remove('hidden');
-        }
-
-        /* ─────────────────────────────────────
-           APP INIT
-        ───────────────────────────────────── */
-        async function initApp(user) {
-            currentUser = user;
-            document.getElementById('auth-page').classList.add('hidden');
-            document.getElementById('app-page').classList.remove('hidden');
-
-            // Sidebar user info
-            const initials = (user.name || user.email || '?').charAt(0).toUpperCase();
-            document.getElementById('sidebar-avatar').textContent = initials;
-            document.getElementById('sidebar-name').textContent = user.name || user.email;
-            const rb = document.getElementById('sidebar-role-badge');
-            rb.textContent = user.role;
-            rb.className = `role-badge role-${user.role}`;
+            <script>
+                const AUTH_API = 'http://localhost:3001';
+                const TASK_API = 'http://localhost:3002';
+                const USER_API = 'http://localhost:3003';
+                const API = AUTH_API;
+                let currentUser = null;
+                let token = localStorage.getItem('jwt_token');
+                let allTasks = [];
+                let currentFilter = 'ALL';
 
 
-            showPage('tasks');
-        }
+                async function apiFetch(url, options = {}) {
+                    return fetch(url, options);
+                }
 
-        /* ─────────────────────────────────────
-           NAVIGATION
-        ───────────────────────────────────── */
-        function showPage(page) {
-            ['tasks', 'profile'].forEach(p => {
-                document.getElementById(`page-${p}`).classList.toggle('hidden', p !== page);
-                const btn = document.querySelector(`[data-page="${p}"]`);
-                if (btn) btn.classList.toggle('active', p === page);
-            });
 
-            if (page === 'tasks') loadTasks();
-            if (page === 'profile') loadProfile();
-        }
+                function authHeaders() {
+                    return {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    };
+                }
 
-        /* ─────────────────────────────────────
-           TASKS — LOAD & RENDER
-        ───────────────────────────────────── */
-        async function loadTasks() {
-            const res = await apiFetch(`${API}/api/tasks/`, { headers: authHeaders() });
-            const data = await res.json();
+                function toast(msg, type = 'info', duration = 3000) {
+                    const t = document.createElement('div');
+                    t.className = `toast ${type}`;
+                    t.textContent = msg;
+                    document.getElementById('toast-container').prepend(t);
+                    setTimeout(() => t.remove(), duration);
+                }
 
-            if (!res.ok) {
-                if (res.status === 401) { toast('Session หมดอายุ กรุณา Login ใหม่', 'error'); doLogout(); }
-                return;
-            }
+                function showAuthMsg(msg, type) {
+                    const el = document.getElementById('auth-msg');
+                    el.className = `auth-msg ${type}`;
+                    el.textContent = msg;
+                }
 
-            allTasks = data.tasks || [];
-            updateStats();
-            renderTasks();
-            document.getElementById('task-count').textContent = allTasks.length;
-        }
+                function switchTab(tab) {
+                    document.getElementById('login-form').classList.toggle('hidden', tab !== 'login');
+                    document.getElementById('register-form').classList.toggle('hidden', tab !== 'register');
+                    document.querySelectorAll('.auth-tab').forEach((btn, i) => {
+                        btn.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'register'));
+                    });
+                    document.getElementById('auth-msg').textContent = '';
+                }
 
-        function updateStats() {
-            const todo = allTasks.filter(t => t.status === 'TODO').length;
-            const inprog = allTasks.filter(t => t.status === 'IN_PROGRESS').length;
-            const done = allTasks.filter(t => t.status === 'DONE').length;
-            document.getElementById('st-total').textContent = allTasks.length;
-            document.getElementById('st-todo').textContent = todo;
-            document.getElementById('st-inprog').textContent = inprog;
-            document.getElementById('st-done').textContent = done;
-        }
+                async function doRegister() {
+                    const username = document.getElementById('reg-username').value.trim();
+                    const email = document.getElementById('reg-email').value.trim();
+                    const password = document.getElementById('reg-password').value;
 
-        function setFilter(f) {
-            currentFilter = f;
-            document.querySelectorAll('.filter-btn').forEach(b => {
-                b.classList.toggle('active', b.textContent.includes(f) ||
-                    (f === 'ALL' && b.textContent === 'ทั้งหมด'));
-            });
-            renderTasks();
-        }
+                    if (!username || !email || !password) {
+                        showAuthMsg('กรุณากรอกข้อมูลให้ครบ', 'error');
+                        return;
+                    }
 
-        function renderTasks() {
-            const tasks = currentFilter === 'ALL'
-                ? allTasks
-                : allTasks.filter(t => t.status === currentFilter);
+                    const btn = document.querySelector('#register-form .btn-primary');
+                    btn.innerHTML = '<span class="spinner"></span> กำลังสมัคร...';
+                    btn.disabled = true;
 
-            const list = document.getElementById('task-list');
-            if (tasks.length === 0) {
-                list.innerHTML = `<div class="empty-state"><div class="emoji">📭</div><p>ไม่มี Task ในหมวดนี้</p></div>`;
-                return;
-            }
+                    const res = await apiFetch(`${AUTH_API}/api/auth/register`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, email, password })
+                    });
+                    const data = await res.json();
 
-            const priorityIcon = { low: '🟢', medium: '🟡', high: '🔴' };
-            const statusChip = {
-                TODO: '<span class="chip chip-todo">⬜ TODO</span>',
-                IN_PROGRESS: '<span class="chip chip-inprogress">🔄 In Progress</span>',
-                DONE: '<span class="chip chip-done">✅ Done</span>',
-            };
+                    btn.textContent = 'สมัครสมาชิก';
+                    btn.disabled = false;
 
-            list.innerHTML = tasks.map(t => `
+                    if (res.ok) {
+                        showAuthMsg('✅ สมัครสำเร็จ! กรุณา Login', 'success');
+                        switchTab('login');
+                        document.getElementById('login-email').value = email;
+                    } else {
+                        showAuthMsg('❌ ' + (data.error || 'สมัครไม่สำเร็จ'), 'error');
+                    }
+                }
+
+                async function doLogin() {
+                    const email = document.getElementById('login-email').value.trim();
+                    const password = document.getElementById('login-password').value;
+                    if (!email || !password) { showAuthMsg('กรุณากรอกข้อมูลให้ครบ', 'error'); return; }
+
+                    const btn = document.querySelector('#login-form .btn-primary');
+                    btn.innerHTML = '<span class="spinner"></span> กำลังเข้าสู่ระบบ...';
+                    btn.disabled = true;
+
+                    const res = await apiFetch(`${AUTH_API}/api/auth/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, password })
+                    });
+                    const data = await res.json();
+
+                    btn.textContent = 'เข้าสู่ระบบ';
+                    btn.disabled = false;
+
+                    if (res.ok) {
+                        token = data.token;
+                        localStorage.setItem('jwt_token', token);
+                        initApp(data.user);
+                    } else {
+                        showAuthMsg('❌ ' + (data.error || 'Login ล้มเหลว'), 'error');
+                    }
+                }
+
+                function doLogout() {
+                    localStorage.removeItem('jwt_token');
+                    token = null; currentUser = null; allTasks = [];
+                    document.getElementById('app-page').classList.add('hidden');
+                    document.getElementById('auth-page').classList.remove('hidden');
+                }
+
+                /* ─────────────────────────────────────
+                   APP INIT
+                ───────────────────────────────────── */
+                async function initApp(user) {
+                    currentUser = user;
+                    document.getElementById('auth-page').classList.add('hidden');
+                    document.getElementById('app-page').classList.remove('hidden');
+
+                    // Sidebar user info
+                    const initials = (user.name || user.email || '?').charAt(0).toUpperCase();
+                    document.getElementById('sidebar-avatar').textContent = initials;
+                    document.getElementById('sidebar-name').textContent = user.name || user.email;
+                    const rb = document.getElementById('sidebar-role-badge');
+                    rb.textContent = user.role;
+                    rb.className = `role-badge role-${user.role}`;
+
+
+                    // แสดง Logs menu ถ้าเป็น admin
+                    if (user.role === 'admin') {
+                        document.getElementById('nav-logs').classList.remove('hidden');
+                    }
+                    showPage('tasks');
+                }
+
+                /* ─────────────────────────────────────
+                   NAVIGATION
+                ───────────────────────────────────── */
+                function showPage(page) {
+                    ['tasks', 'profile', 'logs'].forEach(p => {
+                        const el = document.getElementById(`page-${p}`);
+                        if (el) el.classList.toggle('hidden', p !== page);
+                        const btn = document.querySelector(`[data-page="${p}"]`);
+                        if (btn) btn.classList.toggle('active', p === page);
+                    });
+                    if (page === 'tasks') loadTasks();
+                    if (page === 'profile') loadProfile();
+                    if (page === 'logs') loadAllLogs();
+                }
+
+                /* ─────────────────────────────────────
+                   TASKS — LOAD & RENDER
+                ───────────────────────────────────── */
+                async function loadTasks() {
+                    const res = await apiFetch(`${TASK_API}/api/tasks/`, { headers: authHeaders() });
+                    const data = await res.json();
+
+                    if (!res.ok) {
+                        if (res.status === 401) { toast('Session หมดอายุ กรุณา Login ใหม่', 'error'); doLogout(); }
+                        return;
+                    }
+
+                    allTasks = data.tasks || [];
+                    updateStats();
+                    renderTasks();
+                    document.getElementById('task-count').textContent = allTasks.length;
+                }
+
+                function updateStats() {
+                    const todo = allTasks.filter(t => t.status === 'TODO').length;
+                    const inprog = allTasks.filter(t => t.status === 'IN_PROGRESS').length;
+                    const done = allTasks.filter(t => t.status === 'DONE').length;
+                    document.getElementById('st-total').textContent = allTasks.length;
+                    document.getElementById('st-todo').textContent = todo;
+                    document.getElementById('st-inprog').textContent = inprog;
+                    document.getElementById('st-done').textContent = done;
+                }
+
+                function setFilter(f) {
+                    currentFilter = f;
+                    document.querySelectorAll('.filter-btn').forEach(b => {
+                        b.classList.toggle('active', b.textContent.includes(f) ||
+                            (f === 'ALL' && b.textContent === 'ทั้งหมด'));
+                    });
+                    renderTasks();
+                }
+
+                function renderTasks() {
+                    const tasks = currentFilter === 'ALL'
+                        ? allTasks
+                        : allTasks.filter(t => t.status === currentFilter);
+
+                    const list = document.getElementById('task-list');
+                    if (tasks.length === 0) {
+                        list.innerHTML = `<div class="empty-state"><div class="emoji">📭</div><p>ไม่มี Task ในหมวดนี้</p></div>`;
+                        return;
+                    }
+
+                    const priorityIcon = { low: '🟢', medium: '🟡', high: '🔴' };
+                    const statusChip = {
+                        TODO: '<span class="chip chip-todo">⬜ TODO</span>',
+                        IN_PROGRESS: '<span class="chip chip-inprogress">🔄 In Progress</span>',
+                        DONE: '<span class="chip chip-done">✅ Done</span>',
+                    };
+
+                    list.innerHTML = tasks.map(t => `
     <div class="task-card status-${t.status}" id="task-${t.id}">
       <div class="task-header">
         <div class="title ${t.status === 'DONE' ? 'done' : ''}">${escHtml(t.title)}</div>
@@ -1454,165 +1808,194 @@
       </div>
     </div>
   `).join('');
-        }
-
-        /* ─────────────────────────────────────
-           TASKS — CREATE / EDIT / DELETE
-        ───────────────────────────────────── */
-        function openCreateModal() {
-            document.getElementById('modal-title').textContent = '➕ สร้าง Task ใหม่';
-            document.getElementById('modal-task-id').value = '';
-            document.getElementById('modal-task-title').value = '';
-            document.getElementById('modal-task-desc').value = '';
-            document.getElementById('modal-task-status').value = 'TODO';
-            document.getElementById('modal-task-priority').value = 'medium';
-            document.getElementById('modal-submit-btn').textContent = '💾 สร้าง Task';
-            document.getElementById('task-modal').classList.remove('hidden');
-            document.getElementById('modal-task-title').focus();
-        }
-
-        function openEditModal(id) {
-            const t = allTasks.find(x => x.id === id);
-            if (!t) return;
-            document.getElementById('modal-title').textContent = '✏️ แก้ไข Task';
-            document.getElementById('modal-task-id').value = t.id;
-            document.getElementById('modal-task-title').value = t.title;
-            document.getElementById('modal-task-desc').value = t.description || '';
-            document.getElementById('modal-task-status').value = t.status;
-            document.getElementById('modal-task-priority').value = t.priority;
-            document.getElementById('modal-submit-btn').textContent = '💾 อัปเดต';
-            document.getElementById('task-modal').classList.remove('hidden');
-        }
-
-        function closeModal() { document.getElementById('task-modal').classList.add('hidden'); }
-
-        async function submitTask() {
-            const id = document.getElementById('modal-task-id').value;
-            const title = document.getElementById('modal-task-title').value.trim();
-            if (!title) { toast('กรุณาใส่ชื่อ Task', 'error'); return; }
-
-            const body = {
-                title,
-                description: document.getElementById('modal-task-desc').value,
-                status: document.getElementById('modal-task-status').value,
-                priority: document.getElementById('modal-task-priority').value,
-            };
-
-            const btn = document.getElementById('modal-submit-btn');
-            btn.innerHTML = '<span class="spinner"></span>';
-            btn.disabled = true;
-
-            let res;
-            if (id) {
-                // PUT — update existing
-                res = await apiFetch(`${API}/api/tasks/${id}`, {
-                    method: 'PUT',
-                    headers: authHeaders(),
-                    body: JSON.stringify(body)
-                });
-            } else {
-                // POST — create new
-                res = await apiFetch(`${API}/api/tasks/`, {
-                    method: 'POST',
-                    headers: authHeaders(),
-                    body: JSON.stringify(body)
-                });
-            }
-
-            btn.disabled = false;
-            btn.textContent = id ? '💾 อัปเดต' : '💾 สร้าง Task';
-
-            if (res.ok) {
-                toast(id ? '✅ อัปเดต Task แล้ว' : '✅ สร้าง Task แล้ว', 'success');
-                closeModal();
-                loadTasks();
-            } else {
-                const data = await res.json();
-                if (res.status === 403) toast('🚫 403 Forbidden: คุณไม่มีสิทธิ์แก้ไข Task นี้', 'error', 4000);
-                else toast('❌ ' + (data.error || 'เกิดข้อผิดพลาด'), 'error');
-            }
-        }
-
-        async function quickStatusUpdate(id, newStatus) {
-            const res = await apiFetch(`${API}/api/tasks/${id}`, {
-                method: 'PUT',
-                headers: authHeaders(),
-                body: JSON.stringify({ status: newStatus })
-            });
-            if (res.ok) {
-                toast(`🔄 เปลี่ยนสถานะเป็น ${newStatus}`, 'success', 2000);
-                loadTasks();
-            } else {
-                const data = await res.json();
-                if (res.status === 403) toast('🚫 403 Forbidden', 'error');
-                else toast('❌ ' + (data.error || 'Error'), 'error');
-                loadTasks(); // reset the select
-            }
-        }
-
-        let deleteTargetId = null;
-        function confirmDelete(id) {
-            deleteTargetId = id;
-            document.getElementById('confirm-modal').classList.remove('hidden');
-            document.getElementById('confirm-delete-btn').onclick = async () => {
-                const res = await apiFetch(`${API}/api/tasks/${deleteTargetId}`, {
-                    method: 'DELETE',
-                    headers: authHeaders()
-                });
-                if (res.ok) {
-                    toast('🗑️ ลบ Task แล้ว', 'info');
-                    closeConfirm();
-                    loadTasks();
-                } else {
-                    const data = await res.json();
-                    if (res.status === 403) toast('🚫 403 Forbidden: คุณลบ Task ของคนอื่นไม่ได้', 'error', 4000);
-                    else toast('❌ ' + (data.error || 'Error'), 'error');
-                    closeConfirm();
                 }
-            };
-        }
-        function closeConfirm() {
-            document.getElementById('confirm-modal').classList.add('hidden');
-            deleteTargetId = null;
-        }
 
-        /* ─────────────────────────────────────
-           USERS
-        ───────────────────────────────────── */
-        /* ─────────────────────────────────────
-           PROFILE
-        ───────────────────────────────────── */
-        async function loadProfile() {
-            const res = await apiFetch(`${API}/api/auth/me`, { headers: authHeaders() });
-            const data = await res.json();
-            const u = data.user || currentUser;
-            if (!u) return;
+                /* ─────────────────────────────────────
+                   TASKS — CREATE / EDIT / DELETE
+                ───────────────────────────────────── */
+                function openCreateModal() {
+                    document.getElementById('modal-title').textContent = '➕ สร้าง Task ใหม่';
+                    document.getElementById('modal-task-id').value = '';
+                    document.getElementById('modal-task-title').value = '';
+                    document.getElementById('modal-task-desc').value = '';
+                    document.getElementById('modal-task-status').value = 'TODO';
+                    document.getElementById('modal-task-priority').value = 'medium';
+                    document.getElementById('modal-submit-btn').textContent = '💾 สร้าง Task';
+                    document.getElementById('task-modal').classList.remove('hidden');
+                    document.getElementById('modal-task-title').focus();
+                }
 
-            const initial = (u.name || u.email || '?').charAt(0).toUpperCase();
-            document.getElementById('prof-avatar').textContent = initial;
-            document.getElementById('prof-name').textContent = u.name || '—';
-            document.getElementById('prof-email').textContent = u.email;
-            document.getElementById('prof-id').textContent = u.user_id || u.id || '—';
-            document.getElementById('prof-role').textContent = u.role;
-            document.getElementById('prof-created').textContent =
-                u.created_at ? new Date(u.created_at).toLocaleDateString('th-TH') : '—';
-            const rb = document.getElementById('prof-role-badge');
-            rb.textContent = u.role;
-            rb.className = `role-badge role-${u.role}`;
+                function openEditModal(id) {
+                    const t = allTasks.find(x => x.id === id);
+                    if (!t) return;
+                    document.getElementById('modal-title').textContent = '✏️ แก้ไข Task';
+                    document.getElementById('modal-task-id').value = t.id;
+                    document.getElementById('modal-task-title').value = t.title;
+                    document.getElementById('modal-task-desc').value = t.description || '';
+                    document.getElementById('modal-task-status').value = t.status;
+                    document.getElementById('modal-task-priority').value = t.priority;
+                    document.getElementById('modal-submit-btn').textContent = '💾 อัปเดต';
+                    document.getElementById('task-modal').classList.remove('hidden');
+                }
 
-            renderJwtInspector();
-        }
+                function closeModal() { document.getElementById('task-modal').classList.add('hidden'); }
 
-        /* ─────────────────────────────────────
-           JWT INSPECTOR
-        ───────────────────────────────────── */
-        function renderJwtInspector() {
-            if (!token) return;
-            const parts = token.split('.');
-            if (parts.length !== 3) return;
+                async function submitTask() {
+                    const id = document.getElementById('modal-task-id').value;
+                    const title = document.getElementById('modal-task-title').value.trim();
+                    if (!title) { toast('กรุณาใส่ชื่อ Task', 'error'); return; }
 
-            // Colored token parts
-            document.getElementById('jwt-parts').innerHTML = `
+                    const body = {
+                        title,
+                        description: document.getElementById('modal-task-desc').value,
+                        status: document.getElementById('modal-task-status').value,
+                        priority: document.getElementById('modal-task-priority').value,
+                    };
+
+                    const btn = document.getElementById('modal-submit-btn');
+                    btn.innerHTML = '<span class="spinner"></span>';
+                    btn.disabled = true;
+
+                    let res;
+                    if (id) {
+                        // PUT — update existing
+                        res = await apiFetch(`${TASK_API}/api/tasks/${id}`, {
+                            method: 'PUT',
+                            headers: authHeaders(),
+                            body: JSON.stringify(body)
+                        });
+                    } else {
+                        // POST — create new
+                        res = await apiFetch(`${TASK_API}/api/tasks/`, {
+                            method: 'POST',
+                            headers: authHeaders(),
+                            body: JSON.stringify(body)
+                        });
+                    }
+
+                    btn.disabled = false;
+                    btn.textContent = id ? '💾 อัปเดต' : '💾 สร้าง Task';
+
+                    if (res.ok) {
+                        toast(id ? '✅ อัปเดต Task แล้ว' : '✅ สร้าง Task แล้ว', 'success');
+                        closeModal();
+                        loadTasks();
+                    } else {
+                        const data = await res.json();
+                        if (res.status === 403) toast('🚫 403 Forbidden: คุณไม่มีสิทธิ์แก้ไข Task นี้', 'error', 4000);
+                        else toast('❌ ' + (data.error || 'เกิดข้อผิดพลาด'), 'error');
+                    }
+                }
+
+                async function quickStatusUpdate(id, newStatus) {
+                    const res = await apiFetch(`${TASK_API}/api/tasks/${id}`, {
+                        method: 'PUT',
+                        headers: authHeaders(),
+                        body: JSON.stringify({ status: newStatus })
+                    });
+                    if (res.ok) {
+                        toast(`🔄 เปลี่ยนสถานะเป็น ${newStatus}`, 'success', 2000);
+                        loadTasks();
+                    } else {
+                        const data = await res.json();
+                        if (res.status === 403) toast('🚫 403 Forbidden', 'error');
+                        else toast('❌ ' + (data.error || 'Error'), 'error');
+                        loadTasks(); // reset the select
+                    }
+                }
+
+                let deleteTargetId = null;
+                function confirmDelete(id) {
+                    deleteTargetId = id;
+                    document.getElementById('confirm-modal').classList.remove('hidden');
+                    document.getElementById('confirm-delete-btn').onclick = async () => {
+                        const res = await apiFetch(`${TASK_API}/api/tasks/${deleteTargetId}`, {
+                            method: 'DELETE',
+                            headers: authHeaders()
+                        });
+                        if (res.ok) {
+                            toast('🗑️ ลบ Task แล้ว', 'info');
+                            closeConfirm();
+                            loadTasks();
+                        } else {
+                            const data = await res.json();
+                            if (res.status === 403) toast('🚫 403 Forbidden: คุณลบ Task ของคนอื่นไม่ได้', 'error', 4000);
+                            else toast('❌ ' + (data.error || 'Error'), 'error');
+                            closeConfirm();
+                        }
+                    };
+                }
+                function closeConfirm() {
+                    document.getElementById('confirm-modal').classList.add('hidden');
+                    deleteTargetId = null;
+                }
+
+                /* ─────────────────────────────────────
+                   USERS
+                ───────────────────────────────────── */
+                /* ─────────────────────────────────────
+                   PROFILE
+                ───────────────────────────────────── */
+                async function loadProfile() {
+                    // ดึงจาก auth/me
+                    const res = await apiFetch(`${AUTH_API}/api/auth/me`, { headers: authHeaders() });
+                    const data = await res.json();
+                    const u = data.user || currentUser;
+                    if (!u) return;
+
+                    const initial = (u.username || u.email || '?').charAt(0).toUpperCase();
+                    document.getElementById('prof-avatar').textContent = initial;
+                    document.getElementById('prof-name').textContent = u.username || '—';
+                    document.getElementById('prof-email').textContent = u.email || '—';
+                    document.getElementById('prof-id') && (document.getElementById('prof-id').textContent = u.id || '—');
+
+                    const rb = document.getElementById('prof-role-badge');
+                    rb.textContent = u.role;
+                    rb.className = `role-badge role-${u.role}`;
+
+                    // ดึง profile จาก user-service
+                    try {
+                        const res2 = await apiFetch(`${USER_API}/api/users/me`, { headers: authHeaders() });
+                        const profile = await res2.json();
+                        if (res2.ok) {
+                            document.getElementById('edit-display-name').value = profile.display_name || '';
+                            document.getElementById('edit-bio').value = profile.bio || '';
+                            document.getElementById('edit-avatar-url').value = profile.avatar_url || '';
+                        }
+                    } catch (e) { }
+
+                    renderJwtInspector();
+                }
+
+                async function saveProfile() {
+                    const display_name = document.getElementById('edit-display-name').value.trim();
+                    const bio = document.getElementById('edit-bio').value.trim();
+                    const avatar_url = document.getElementById('edit-avatar-url').value.trim();
+
+                    const res = await apiFetch(`${USER_API}/api/users/me`, {
+                        method: 'PUT',
+                        headers: authHeaders(),
+                        body: JSON.stringify({ display_name, bio, avatar_url })
+                    });
+
+                    if (res.ok) {
+                        toast('✅ บันทึกโปรไฟล์สำเร็จ', 'success');
+                    } else {
+                        const data = await res.json();
+                        toast('❌ ' + (data.error || 'บันทึกไม่สำเร็จ'), 'error');
+                    }
+                }
+
+                /* ─────────────────────────────────────
+                   JWT INSPECTOR
+                ───────────────────────────────────── */
+                function renderJwtInspector() {
+                    if (!token) return;
+                    const parts = token.split('.');
+                    if (parts.length !== 3) return;
+
+                    // Colored token parts
+                    document.getElementById('jwt-parts').innerHTML = `
     <span class="jwt-part jwt-header-part"  title="Header">${parts[0]}</span>
     <span style="color:var(--muted)">.</span>
     <span class="jwt-part jwt-payload-part" title="Payload">${parts[1]}</span>
@@ -1620,59 +2003,184 @@
     <span class="jwt-part jwt-sig-part"     title="Signature">${parts[2]}</span>
   `;
 
-            try {
-                const payload = JSON.parse(atob(parts[1]));
-                const expDate = new Date(payload.exp * 1000);
-                const nowMs = Date.now();
-                const msLeft = expDate - nowMs;
-                const minLeft = Math.round(msLeft / 60000);
-                const isExp = msLeft < 0;
+                    try {
+                        const payload = JSON.parse(atob(parts[1]));
+                        const expDate = new Date(payload.exp * 1000);
+                        const nowMs = Date.now();
+                        const msLeft = expDate - nowMs;
+                        const minLeft = Math.round(msLeft / 60000);
+                        const isExp = msLeft < 0;
 
-                document.getElementById('jwt-decoded').innerHTML = `
+                        document.getElementById('jwt-decoded').innerHTML = `
       <p style="font-size:.78rem;color:var(--muted);margin-bottom:.4rem">🟣 Payload (decoded — ใครก็อ่านได้!):</p>
       <pre>${JSON.stringify(payload, null, 2)}</pre>
     `;
-                document.getElementById('token-exp').innerHTML = isExp
-                    ? `<span class="exp-bad">⚠️ Token หมดอายุแล้ว!</span>`
-                    : `<span class="exp-ok">✅ Token ยังใช้ได้ — หมดอายุใน ${minLeft} นาที (${expDate.toLocaleTimeString('th-TH')})</span>`;
-            } catch (e) {
-                document.getElementById('jwt-decoded').innerHTML = '<p style="color:var(--red)">ไม่สามารถ decode ได้</p>';
-            }
-        }
-
-        /* ─────────────────────────────────────
-           UTILS
-        ───────────────────────────────────── */
-        function escHtml(s) {
-            return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        }
-
-        // Close modals on overlay click
-        document.getElementById('task-modal').addEventListener('click', e => {
-            if (e.target === e.currentTarget) closeModal();
-        });
-        document.getElementById('confirm-modal').addEventListener('click', e => {
-            if (e.target === e.currentTarget) closeConfirm();
-        });
-
-        /* ─────────────────────────────────────
-           AUTO-LOGIN ON PAGE LOAD
-        ───────────────────────────────────── */
-        if (token) {
-            (async () => {
-                const res = await apiFetch(`${API}/api/auth/verify`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                const data = await res.json();
-                if (data.valid) {
-                    initApp(data.user);
-                } else {
-                    localStorage.removeItem('jwt_token');
-                    token = null;
+                        document.getElementById('token-exp').innerHTML = isExp
+                            ? `<span class="exp-bad">⚠️ Token หมดอายุแล้ว!</span>`
+                            : `<span class="exp-ok">✅ Token ยังใช้ได้ — หมดอายุใน ${minLeft} นาที (${expDate.toLocaleTimeString('th-TH')})</span>`;
+                    } catch (e) {
+                        document.getElementById('jwt-decoded').innerHTML = '<p style="color:var(--red)">ไม่สามารถ decode ได้</p>';
+                    }
                 }
-            })();
-        }
-    </script>
+
+                /* ─────────────────────────────────────
+                   LOG DASHBOARD (Admin)
+                ───────────────────────────────────── */
+                let allLogsData = [];
+                let logFilterLevel = 'ALL';
+                let logFilterService = 'ALL';
+                let logOffset = 0;
+                const LOG_LIMIT = 50;
+
+                async function loadAllLogs() {
+                    const body = document.getElementById('log-table-body');
+                    if (body) body.innerHTML = '<div class="log-empty-box"><div class="spinner"></div><p style="margin-top:1rem">กำลังโหลด logs...</p></div>';
+
+                    try {
+                        const [authRes, taskRes, userRes] = await Promise.allSettled([
+                            apiFetch(`${AUTH_API}/api/auth/logs`, { headers: authHeaders() }).then(r => r.json()),
+                            apiFetch(`${TASK_API}/api/tasks/logs`, { headers: authHeaders() }).then(r => r.json()),
+                            apiFetch(`${USER_API}/api/users/logs`, { headers: authHeaders() }).then(r => r.json()),
+                        ]);
+
+                        allLogsData = [];
+                        if (authRes.status === 'fulfilled' && authRes.value.logs) {
+                            authRes.value.logs.forEach(l => { l._service = 'auth-service'; allLogsData.push(l); });
+                        }
+                        if (taskRes.status === 'fulfilled' && taskRes.value.logs) {
+                            taskRes.value.logs.forEach(l => { l._service = 'task-service'; allLogsData.push(l); });
+                        }
+                        if (userRes.status === 'fulfilled' && userRes.value.logs) {
+                            userRes.value.logs.forEach(l => { l._service = 'user-service'; allLogsData.push(l); });
+                        }
+
+                        // Sort by created_at descending
+                        allLogsData.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+                        updateLogStats();
+                        logOffset = 0;
+                        renderLogTable();
+                    } catch (err) {
+                        console.error('loadAllLogs error:', err);
+                        if (body) body.innerHTML = '<div class="log-empty-box"><div class="icon">❌</div><p>โหลด logs ไม่สำเร็จ</p></div>';
+                    }
+                }
+
+                function getFilteredLogs() {
+                    return allLogsData.filter(l => {
+                        if (logFilterLevel !== 'ALL' && l.level !== logFilterLevel) return false;
+                        if (logFilterService !== 'ALL' && l._service !== logFilterService) return false;
+                        return true;
+                    });
+                }
+
+                function updateLogStats() {
+                    const total = allLogsData.length;
+                    const info = allLogsData.filter(l => l.level === 'INFO').length;
+                    const warn = allLogsData.filter(l => l.level === 'WARN').length;
+                    const error = allLogsData.filter(l => l.level === 'ERROR').length;
+                    document.getElementById('log-st-total').textContent = total;
+                    document.getElementById('log-st-info').textContent = info;
+                    document.getElementById('log-st-warn').textContent = warn;
+                    document.getElementById('log-st-error').textContent = error;
+                }
+
+                function renderLogTable() {
+                    const body = document.getElementById('log-table-body');
+                    if (!body) return;
+
+                    const filtered = getFilteredLogs();
+                    const page = filtered.slice(logOffset, logOffset + LOG_LIMIT);
+
+                    // Badge
+                    const badge = document.getElementById('log-badge-count');
+                    if (badge) badge.textContent = filtered.length;
+
+                    if (page.length === 0) {
+                        body.innerHTML = '<div class="log-empty-box"><div class="icon">📭</div><p>ไม่มี log ในหมวดนี้</p></div>';
+                    } else {
+                        body.innerHTML = page.map(l => {
+                            const t = new Date(l.created_at).toLocaleString('th-TH', {
+                                month: '2-digit', day: '2-digit',
+                                hour: '2-digit', minute: '2-digit', second: '2-digit'
+                            });
+                            const svcKey = l._service === 'auth-service' ? 'auth' : l._service === 'task-service' ? 'task' : 'user';
+                            const userInfo = l.user_id ? `uid:${l.user_id}` : '—';
+                            return `<div class="log-row">
+                                <span class="log-time-text">${escHtml(t)}</span>
+                                <span><span class="log-chip log-chip-${escHtml(l.level)}">${escHtml(l.level)}</span></span>
+                                <span><span class="log-chip log-chip-${svcKey}">${svcKey}</span></span>
+                                <span class="log-event-text">${escHtml(l.event)}</span>
+                                <span class="log-msg-text" title="${escHtml(l.message || '')}">${escHtml(l.message || '—')}</span>
+                                <span class="log-time-text">${escHtml(userInfo)}</span>
+                            </div>`;
+                        }).join('');
+                    }
+
+                    // Pagination
+                    const info = document.getElementById('log-page-info');
+                    const btnPrev = document.getElementById('log-btn-prev');
+                    const btnNext = document.getElementById('log-btn-next');
+                    const from = filtered.length === 0 ? 0 : logOffset + 1;
+                    const to = Math.min(logOffset + LOG_LIMIT, filtered.length);
+                    if (info) info.textContent = `แสดง ${from}–${to} จาก ${filtered.length} รายการ`;
+                    if (btnPrev) btnPrev.disabled = logOffset === 0;
+                    if (btnNext) btnNext.disabled = (logOffset + LOG_LIMIT) >= filtered.length;
+                }
+
+                function setLogFilter(level) {
+                    logFilterLevel = level;
+                    logOffset = 0;
+                    document.querySelectorAll('.log-filter-row .filter-btn').forEach(b => {
+                        b.classList.toggle('active',
+                            b.textContent === level ||
+                            (level === 'ALL' && b.textContent === 'ทั้งหมด'));
+                    });
+                    renderLogTable();
+                }
+
+                function setLogService(svc) {
+                    logFilterService = svc;
+                    logOffset = 0;
+                    renderLogTable();
+                }
+
+                function logPrevPage() { if (logOffset > 0) { logOffset = Math.max(0, logOffset - LOG_LIMIT); renderLogTable(); } }
+                function logNextPage() { logOffset += LOG_LIMIT; renderLogTable(); }
+
+                /* ─────────────────────────────────────
+                   UTILS
+                ───────────────────────────────────── */
+                function escHtml(s) {
+                    return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                }
+
+                // Close modals on overlay click
+                document.getElementById('task-modal').addEventListener('click', e => {
+                    if (e.target === e.currentTarget) closeModal();
+                });
+                document.getElementById('confirm-modal').addEventListener('click', e => {
+                    if (e.target === e.currentTarget) closeConfirm();
+                });
+
+                /* ─────────────────────────────────────
+                   AUTO-LOGIN ON PAGE LOAD
+                ───────────────────────────────────── */
+                if (token) {
+                    (async () => {
+                        const res = await apiFetch(`${AUTH_API}/api/auth/verify`, {
+                            headers: { Authorization: `Bearer ${token}` }
+                        });
+                        const data = await res.json();
+                        if (data.valid) {
+                            initApp(data.user);
+                        } else {
+                            localStorage.removeItem('jwt_token');
+                            token = null;
+                        }
+                    })();
+                }
+            </script>
 </body>
 
 </html>

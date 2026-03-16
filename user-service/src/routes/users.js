@@ -97,4 +97,16 @@ router.get('/', verifyToken, async (req, res) => {
   }
 });
 
+// GET /api/users/logs (admin only)
+router.get('/logs', verifyToken, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Forbidden: Admin only' });
+    const result = await db.query('SELECT * FROM logs ORDER BY created_at DESC LIMIT 200');
+    res.json({ logs: result.rows, count: result.rowCount, service: 'user-service' });
+  } catch (err) {
+    console.error('GET /users/logs error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 module.exports = router;

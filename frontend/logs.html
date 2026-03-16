@@ -165,7 +165,10 @@
 /* ══════════════════════════════════════
    STATE
 ══════════════════════════════════════ */
-const API   = 'https://localhost';
+const AUTH_API = 'http://localhost:3001';
+const TASK_API = 'http://localhost:3002';
+const USER_API = 'http://localhost:3003';
+const API = AUTH_API;
 const token = localStorage.getItem('jwt_token');
 let currentUser = null;
 let allLogs     = [];
@@ -316,64 +319,40 @@ function renderDashboard() {
 async function loadLogs() {
   const logTable = document.getElementById('log-table');
   if (!logTable) return;
-  logTable.innerHTML = '<div class="spinner-wrap"><div class="spinner"></div><p style="margin-top:1rem">กำลังโหลด...</p></div>';
 
-  try {
-    // สร้าง query params
-    const params = new URLSearchParams({ limit: LIMIT, offset });
-    if (filterLevel   !== 'ALL') params.set('level',   filterLevel);
-    if (filterService !== 'ALL') params.set('service', filterService);
+  logTable.innerHTML = `
+    <div class="empty-box">
+      <div class="icon">📋</div>
+      <p style="font-size:1rem;font-weight:600;color:var(--text)">Set 2 — Database-per-Service</p>
+      <p style="margin-top:.5rem">Logs ถูกบันทึกใน <code>logs</code> table ของแต่ละ database แทน log-service</p>
+      <div style="margin-top:1.5rem;display:grid;gap:.75rem;text-align:left;max-width:400px;margin-left:auto;margin-right:auto">
+        <div style="background:var(--s2);padding:.75rem 1rem;border-radius:8px;border:1px solid var(--border)">
+          <div style="font-size:.8rem;color:var(--blue);font-weight:600">🔑 auth-db.logs</div>
+          <div style="font-size:.75rem;color:var(--muted);margin-top:.25rem">LOGIN_SUCCESS, LOGIN_FAILED, REGISTER</div>
+        </div>
+        <div style="background:var(--s2);padding:.75rem 1rem;border-radius:8px;border:1px solid var(--border)">
+          <div style="font-size:.8rem;color:var(--purple);font-weight:600">📋 task-db.logs</div>
+          <div style="font-size:.75rem;color:var(--muted);margin-top:.25rem">TASK_CREATED, TASK_UPDATED, TASK_DELETED</div>
+        </div>
+        <div style="background:var(--s2);padding:.75rem 1rem;border-radius:8px;border:1px solid var(--border)">
+          <div style="font-size:.8rem;color:var(--green);font-weight:600">👤 user-db.logs</div>
+          <div style="font-size:.75rem;color:var(--muted);margin-top:.25rem">PROFILE_UPDATED, PROFILE_AUTO_CREATED</div>
+        </div>
+      </div>
+    </div>`;
 
-    const res = await fetch(`${API}/api/logs/?${params}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-
-    if (res.status === 401) { renderNoToken(); return; }
-    if (res.status === 403) { renderForbidden(); return; }
-    if (!res.ok) { toast('❌ โหลด logs ไม่สำเร็จ: ' + res.status, 'error'); return; }
-
-    const data = await res.json();
-    allLogs = data.logs || [];
-    const total = data.total || 0;
-
-    renderLogTable(allLogs);
-    renderPagination(total);
-    document.getElementById('log-count').textContent = total;
-
-    // โหลด stats แยก
-    loadStats();
-
-  } catch(e) {
-    logTable.innerHTML = `<div class="empty-box"><div class="icon">❌</div><p>เชื่อมต่อ API ไม่ได้: ${esc(e.message)}</p></div>`;
-  }
+  // อัปเดต stats
+  const setEl = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
+  setEl('s-total', 'N/A');
+  setEl('s-info',  'N/A');
+  setEl('s-warn',  'N/A');
+  setEl('s-error', 'N/A');
+  setEl('s-24h',   'N/A');
+  
+  const countEl = document.getElementById('log-count');
+  if (countEl) countEl.textContent = 'DB';
 }
 
-async function loadStats() {
-  try {
-    const res  = await fetch(`${API}/api/logs/stats`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    if (!res.ok) return;
-    const data = await res.json();
-
-    // Stats tiles
-    const total = (data.by_level || []).reduce((s, r) => s + parseInt(r.count), 0);
-    const info  = (data.by_level || []).find(r => r.level === 'INFO')?.count  || 0;
-    const warn  = (data.by_level || []).find(r => r.level === 'WARN')?.count  || 0;
-    const error = (data.by_level || []).find(r => r.level === 'ERROR')?.count || 0;
-
-    const setEl = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
-    setEl('s-total', total);
-    setEl('s-info',  info);
-    setEl('s-warn',  warn);
-    setEl('s-error', error);
-    setEl('s-24h',   data.last_24h || 0);
-
-    // Top events chart
-    renderEventStats(data.top_events || []);
-
-  } catch(e) {}
-}
 
 /* ══════════════════════════════════════
    RENDER LOG TABLE
