@@ -7,12 +7,23 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #0f172a; --surface: #1e293b; --s2: #273448;
-      --border: #334155; --text: #e2e8f0; --muted: #94a3b8;
-      --blue: #3b82f6; --green: #22c55e; --yellow: #f59e0b;
-      --red: #ef4444; --purple: #a855f7;
+      --bg: #e8f4fc; --surface: #ffffff; --s2: #f0f7ff;
+      --border: #b8d8f0; --text: #1e3a5f; --muted: #5a8aab;
+      --blue: #2e86de; --green: #27ae60; --yellow: #f39c12;
+      --red: #e74c3c; --purple: #8e44ad;
     }
-    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: linear-gradient(180deg, #d0e8f7 0%, #e8f4fc 40%, #f5faff 100%); color: var(--text); min-height: 100vh; position: relative; overflow-x: hidden; }
+
+    /* Snow */
+    .snowflakes { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9998; overflow: hidden; }
+    .snowflake { position: absolute; top: -20px; color: rgba(255,255,255,0.9); font-size: 1rem; animation: snowfall linear infinite; text-shadow: 0 0 4px rgba(174,214,241,0.7); }
+    @keyframes snowfall {
+      0% { transform: translateX(0) rotate(0deg); opacity: 1; }
+      25% { transform: translateX(15px) rotate(90deg); }
+      50% { transform: translateX(-10px) rotate(180deg); }
+      75% { transform: translateX(20px) rotate(270deg); }
+      100% { transform: translateX(-5px) rotate(360deg); top: 100vh; opacity: 0.3; }
+    }
 
     /* ── HEADER ── */
     .header {
@@ -143,6 +154,8 @@
   </style>
 </head>
 <body>
+
+<div class="snowflakes" id="snowflakes"></div>
 
 <!-- HEADER -->
 <div class="header">
@@ -499,6 +512,24 @@ function toast(msg, type='error') {
    START
 ══════════════════════════════════════ */
 init();
+</script>
+
+<script>
+(function createSnow() {
+  const container = document.getElementById('snowflakes');
+  const snowChars = ['❄', '❅', '❆', '✻', '✼', '❉', '•'];
+  for (let i = 0; i < 40; i++) {
+    const f = document.createElement('div');
+    f.classList.add('snowflake');
+    f.textContent = snowChars[Math.floor(Math.random() * snowChars.length)];
+    f.style.left = Math.random() * 100 + '%';
+    f.style.fontSize = (Math.random() * 1.2 + 0.5) + 'rem';
+    f.style.opacity = Math.random() * 0.7 + 0.3;
+    f.style.animationDuration = (Math.random() * 8 + 5) + 's';
+    f.style.animationDelay = (Math.random() * 10) + 's';
+    container.appendChild(f);
+  }
+})();
 </script>
 </body>
 </html>
