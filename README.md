@@ -47,22 +47,22 @@ Set 2 ต่อยอดจาก Set 1 โดย
 ```text
 Internet / Browser / Postman
           │
-          ├──► https://[AUTH_URL]     → auth-service (PORT 3001)
-          │                                    │
-          │                               auth-db (PostgreSQL)
-          │                               users, logs
+          ├──► https://auth-service-production-d7a0.up.railway.app     → auth-service (PORT 3001)
+          │                                                                            │
+          │                                                                     auth-db (PostgreSQL)
+          │                                                                        users, logs
           │
-          ├──► https://[TASK_URL]     → task-service (PORT 3002)
-          │                                    │
-          │                               task-db (PostgreSQL)
-          │                               tasks, logs
+          ├──► https://task-service-production-cbc1.up.railway.app     → task-service (PORT 3002)
+          │                                                                           │
+          │                                                                  task-db (PostgreSQL)
+          │                                                                      tasks, logs
           │
-          ├──► https://[USER_URL]     → user-service (PORT 3003)
-          │                                    │
-          │                               user-db (PostgreSQL)
-          │                               user_profiles, logs
+          ├──► https://user-service-production-f14a.up.railway.app     → user-service (PORT 3003)
+          │                                                                            │
+          │                                                                     user-db (PostgreSQL)
+          │                                                                     user_profiles, logs
           │
-          └──► https://[FRONTEND_URL] → frontend (nginx)
+          └──► https://frontend-production-47ba.up.railway.app/index.html → frontend (nginx)
 
 JWT_SECRET ใช้ร่วมกันทุก service
 user_id ใช้เป็น logical reference (ไม่มี FK ข้าม DB)
