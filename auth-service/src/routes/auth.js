@@ -13,9 +13,11 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'Missing fields' });
     }
 
+    const normalizedEmail = email.toLowerCase().trim();
+
     const existing = await db.query(
       'SELECT id FROM users WHERE email = $1 OR username = $2',
-      [email, username]
+      [normalizedEmail, username]
     );
     if (existing.rows.length > 0) {
       return res.status(409).json({ error: 'Username or email already exists' });
@@ -26,7 +28,7 @@ router.post('/register', async (req, res) => {
       `INSERT INTO users (username, email, password_hash, role)
        VALUES ($1, $2, $3, 'member')
        RETURNING id, username, email, role, created_at`,
-      [username, email, hash]
+      [username, normalizedEmail, hash]
     );
 
     res.status(201).json({ message: 'Registered', user: result.rows[0] });

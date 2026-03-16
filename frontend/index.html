@@ -1758,9 +1758,9 @@
                     document.getElementById('app-page').classList.remove('hidden');
 
                     // Sidebar user info
-                    const initials = (user.name || user.email || '?').charAt(0).toUpperCase();
+                    const initials = (user.username || user.email || '?').charAt(0).toUpperCase();
                     document.getElementById('sidebar-avatar').textContent = initials;
-                    document.getElementById('sidebar-name').textContent = user.name || user.email;
+                    document.getElementById('sidebar-name').textContent = user.username || user.email;
                     const rb = document.getElementById('sidebar-role-badge');
                     rb.textContent = user.role;
                     rb.className = `role-badge role-${user.role}`;
@@ -2013,7 +2013,8 @@
                     // ดึง profile จาก user-service
                     try {
                         const res2 = await apiFetch(`${USER_API}/api/users/me`, { headers: authHeaders() });
-                        const profile = await res2.json();
+                        const profileData = await res2.json();
+                        const profile = profileData.profile || profileData;
                         if (res2.ok) {
                             document.getElementById('edit-display-name').value = profile.display_name || '';
                             document.getElementById('edit-bio').value = profile.bio || '';
