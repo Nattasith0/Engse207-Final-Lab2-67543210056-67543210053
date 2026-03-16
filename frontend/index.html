@@ -2019,6 +2019,15 @@
                             document.getElementById('edit-display-name').value = profile.display_name || '';
                             document.getElementById('edit-bio').value = profile.bio || '';
                             document.getElementById('edit-avatar-url').value = profile.avatar_url || '';
+                            
+                            // อัปเดต UI ด้านบนสุดและ Sidebar
+                            if (profile.display_name) {
+                                document.getElementById('prof-name').textContent = profile.display_name;
+                                document.getElementById('sidebar-name').textContent = profile.display_name;
+                            }
+                            if (profile.avatar_url) {
+                                document.getElementById('prof-avatar').innerHTML = `<img src="${profile.avatar_url}" alt="Avatar" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+                            }
                         }
                     } catch (e) { }
 
@@ -2038,6 +2047,7 @@
 
                     if (res.ok) {
                         toast('✅ บันทึกโปรไฟล์สำเร็จ', 'success');
+                        loadProfile(); // รีโหลดเพื่ออัปเดต UI
                     } else {
                         const data = await res.json();
                         toast('❌ ' + (data.error || 'บันทึกไม่สำเร็จ'), 'error');
